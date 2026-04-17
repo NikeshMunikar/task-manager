@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { Request, Response, type NextFunction } from "express";
 import { createTask,deleteTaskById,getTask, getTaskById } from "../services/task.service";
 import { AuthRequest } from "../middleware/auth.middleware";
 
-export const createTaskController = (req: AuthRequest, res: Response) => {
+export const createTaskController = (req: AuthRequest, res: Response,next:NextFunction) => {
   try {
     const { title, description } = req.body;
 
@@ -20,7 +20,7 @@ export const createTaskController = (req: AuthRequest, res: Response) => {
         success: false,
         message: "Unauthorized",
       });
-    }
+    }  
 
     const task = createTask(title, description, user);
 
@@ -29,14 +29,11 @@ export const createTaskController = (req: AuthRequest, res: Response) => {
       task,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    next(error)
   }
 };
 
-export const getTasksController = (req:AuthRequest,res:Response)=>{
+export const getTasksController = (req:AuthRequest,res:Response,next:NextFunction)=>{
   try{
     if(!req.user?.email){
       return res.status(401).json({
@@ -57,14 +54,11 @@ export const getTasksController = (req:AuthRequest,res:Response)=>{
   })
   }
   catch(error){
-    return res.status(500).json({
-      success:false,
-      message:`Server error: ${error instanceof Error?error.message:"Unknown error"}`
-    })
+    next(error)
   }
 }
 
-export const getTaskByIdController = (req:AuthRequest,res:Response)=>{
+export const getTaskByIdController = (req:AuthRequest,res:Response,next:NextFunction)=>{
   try{
     const taskId = req.params.id ;
     if(!req.user?.email){
@@ -94,14 +88,11 @@ export const getTaskByIdController = (req:AuthRequest,res:Response)=>{
     
   }
   catch(error){
-    return res.status(500).json({
-      success:false,
-      message:`Server error: ${error instanceof Error?error.message:"Unknown error"}`
-    })
+    next(error)
   }
 }
 
-export const deleteTaskByIdController = (req:AuthRequest,res:Response)=>{
+export const deleteTaskByIdController = (req:AuthRequest,res:Response, next: NextFunction)=>{
   try{
     const taskId = req.params.id;
      if(!req.user?.email){
@@ -128,9 +119,6 @@ export const deleteTaskByIdController = (req:AuthRequest,res:Response)=>{
       message:"Task deleted successfully"
     })
   }catch(error){
-    res.status(500).json({
-      success:false,
-      message:`Server error: ${error instanceof Error?error.message:"Unknown error"}`
-    })
+   next(error);
   }
 }
