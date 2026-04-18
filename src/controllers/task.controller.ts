@@ -114,10 +114,7 @@ export const deleteTaskByIdController = (req:AuthRequest,res:Response, next: Nex
         message:"No task found with this id or you are not authorized"
       })
     }
-    return res.status(200).json({
-      success:true,
-      message:"Task deleted successfully"
-    })
+    return res.status(204).send();
   }catch(error){
    next(error);
   }
