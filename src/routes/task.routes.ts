@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { createTaskController, getTasksController, getTaskByIdController, deleteTaskByIdController } from "../controllers/task.controller";
+import { createTaskController, getTasksController, getTaskByIdController, deleteTaskByIdController, updateTaskController } from "../controllers/task.controller";
 
 const router = Router();
 
@@ -10,7 +10,9 @@ router.get("/",authMiddleware, getTasksController);
 
 router.get("/:id", authMiddleware, getTaskByIdController);
 
-router.delete("/:id",authMiddleware,deleteTaskByIdController)
+router.delete("/:id",authMiddleware,deleteTaskByIdController);
+
+router.patch("/:id", authMiddleware, updateTaskController);
 
 export default router;
 

@@ -10,13 +10,13 @@ const tasks: Task[] = [];
 
 export const createTask = (
   title: string,
-  description: string,
   user: string,
+  description?: string
 ) => {
   const newTask: Task = {
     id: Date.now().toString(),
     title,
-    description,
+    ...(description !== undefined && {description}),
     user,
     completed: false,
   };
@@ -38,10 +38,24 @@ export const getTaskById = (id: string, user: string): Task | null => {
   return task;
 };
 
-export const deleteTaskById = (id:string, user:string): boolean | null=>{
-  const index = tasks.findIndex(task=>task.id===id && task.user === user);
+export const deleteTaskById = (id: string, user: string): boolean | null => {
+  const index = tasks.findIndex((task) => task.id === id && task.user === user);
 
   if (index === -1) return null;
-  tasks.splice(index,1);
+  tasks.splice(index, 1);
   return true;
-}
+};
+
+export const updateTaskById = (
+  id: string,
+  user: string,
+  updates: Partial<Pick<Task, "title" | "description" | "completed">>,
+): Task | null => {
+  const task = tasks.find((t) => t.id === id && t.user === user);
+  if (!task) return null;
+  if (updates.title !== undefined) task.title = updates.title;
+  if (updates.description !== undefined) task.description = updates.description;
+  if (updates.completed !== undefined) task.completed = updates.completed;
+
+  return task;
+};
