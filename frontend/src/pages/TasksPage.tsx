@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { taskApi, type Task } from "../api/task.api";
 import { useAuth } from "../context/AuthContext";
+import "./TaskPage.css";
 
 const TasksPage = () => {
   const { logout } = useAuth();
@@ -43,10 +44,16 @@ const TasksPage = () => {
       </button>
       {loading && <div>Loading...</div>}
       {error && <div style={{ color: "red" }}>{error}</div>}
-      {!loading && tasks.length === 0 && <div>No tasks found</div>}
+      {!loading && tasks.length === 0 && (
+        <div>
+          <h3>You don't have any tasks yet.</h3>
+          <p>Create one below.</p>
+        </div>
+      )}
+      <div className="task-container">
       <h3>Task List</h3>
       {tasks.map((t) => (
-        <div key={t.id}>
+        <div className="task-card" key={t.id}>
           {editingId === t.id ? (
             <>
               <input
@@ -93,8 +100,13 @@ const TasksPage = () => {
               >
                 {t.title}
               </h3>
-              {t.description && <p style={{display:t.completed ? "none": "block"}}>{t.description}</p>}
+              {t.description && (
+                <p style={{ display: t.completed ? "none" : "block" }}>
+                  {t.description}
+                </p>
+              )}
 
+              <div className="task-actions">
               <button
                 onClick={async () => {
                   try {
@@ -140,10 +152,13 @@ const TasksPage = () => {
               >
                 Delete
               </button>
+              </div>
+
             </>
           )}
         </div>
       ))}
+      </div>
       <form
         onSubmit={async (e) => {
           e.preventDefault();
